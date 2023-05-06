@@ -1,30 +1,40 @@
+import { v4 as uuidv4 } from "uuid";
 import React, { useState } from "react";
+import Header from "./Components/Header";
+import FeedbackList from "./Components/FeedbackList";
+import FeedbackStats from "./Components/FeedbackStats";
+import feedbackData from "./Components/Data/feedbackData";
+import FeedbackForm from "./Components/FeedbackForm";
 
 const App = () => {
-    const [comments, setComments] = useState([
-        { id: 1, text: "Comment 1" },
-        { id: 2, text: "Comment 2" },
-        { id: 3, text: "Comment 3" },
-    ]);
+    const [feedback, setFeedback] = useState(feedbackData);
+
+    const deleteFeedback = (id) => {
+        setFeedback((prev) => prev.filter((item) => item.id !== id));
+    };
+
+    const addFeedback = (rating, text) => {
+        // console.log(rating, text);
+        const obj = {};
+
+        obj.id = uuidv4();
+        obj.rating = rating;
+        obj.text = text;
+
+        setFeedback((prev) => {
+            return [obj, ...prev];
+        });
+    };
 
     return (
-        <div className="container">
-            <h1>Hello, World!</h1>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis, dignissimos?</p>
-
-            {comments ? (
-                <>
-                    <h2>Comments ({comments.length})</h2>
-                    <ul>
-                        {comments.map((comment) => (
-                            <li key={comment.id}>{comment.text}</li>
-                        ))}
-                    </ul>
-                </>
-            ) : (
-                <p>No comments</p>
-            )}
-        </div>
+        <>
+            <Header />
+            <div className="container">
+                <FeedbackForm addFeedback={addFeedback} />
+                <FeedbackStats feedback={feedback} />
+                <FeedbackList feedbackData={feedback} handleDelete={deleteFeedback} />
+            </div>
+        </>
     );
 };
 
